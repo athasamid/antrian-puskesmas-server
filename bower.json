@@ -1,0 +1,17 @@
+{
+  "name": "antrian-puskesmas",
+  "authors": [
+    "athasamid <athasamid@gmail.com>"
+  ],
+  "description": "Antrian untuk puskesmas",
+  "main": "app.j",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

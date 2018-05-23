@@ -13,7 +13,7 @@ class Antrian_m extends CI_Model {
 			return ['id' => $check->id];
 		} else {
 			$this->db->select('no_antrian');
-			$this->db->where('date(w_antrian) = date(now())');
+			$this->db->where('date(w_antrian) = date(now()) and id_poli = '.$input['id_poli']);
 			$this->db->order_by('no_antrian', 'desc');
 			$lastAntrian = $this->db->get('antrian')->row();
 
@@ -37,22 +37,29 @@ class Antrian_m extends CI_Model {
 	}
 
 	public function lihat($id_user){
-		$this->db->select('a.id, a.id_poli, a.id_pasien, a.w_antrian, a.no_antrian');
+		$this->db->select('a.id, a.id_poli, a.id_pasien, a.w_antrian, date(a.w_antrian) as date_antrian, a.no_antrian');
 		$this->db->join('pasien p', 'p.id = a.id_pasien');
 		$this->db->join('masyarakat m', 'm.id = p.id_masyarakat');
 		$this->db->join('user u', 'u.id_pemilik = m.id and u.jenis_pemilik = \'masyarakat\'');
+		$this->db->order_by('a.w_antrian', 'desc');
 		$this->db->where('u.id', $id_user);
 		$antrian = $this->db->get('antrian a')->result();
 
 		foreach ($antrian as $row) {
-			$today = new DateTime();
-			$today->setTime( 0, 0, 0 );
+			$start = new DateTime();
+			$start->setTime( 0, 0, 0 );
+
+			$end = new DateTime();
+			$end->setTime(23, 59, 59);
 
 			$checkedDate = DateTime::createFromFormat( "Y-m-d H:i:s", $row->w_antrian );
-			$diff = $today->diff( $checkedDate );
-			$diffDays = (integer)$diff->format( "%R%a" );
 
-			$row->in_progress = $diffDays == 0;
+			$this->db->select('id, id_poli, waktu, antrian');
+			$this->db->where('id_poli = '. $row->id_poli .' and waktu = \''.$row->date_antrian.'\'');
+			$dilayani = $this->db->get('poli_dilayani')->row();
+			$row->dilayani = $dilayani ? (int)$dilayani->antrian : 0;
+
+			$row->in_progress = ($checkedDate->getTimestamp() > $start->getTimestamp() && $checkedDate->getTimestamp() < $end->getTimestamp()) && $row->dilayani < $row->no_antrian;
 			$this->db->select('id, nama');
 			$this->db->where('id', $row->id_poli);
 			$row->poli = $this->db->get('poli')->row();
@@ -66,9 +73,24 @@ class Antrian_m extends CI_Model {
 	}
 
 	public function get($id){
-		$this->db->select('a.id, a.id_poli, a.id_pasien, a.w_antrian, a.no_antrian');
+		$this->db->select('a.id, a.id_poli, a.id_pasien, a.w_antrian, date(a.w_antrian) as date_antrian, a.no_antrian');
 		$this->db->where('a.id', $id);
 		$antrian = $this->db->get('antrian a')->row();
+
+		$this->db->select('id, id_poli, waktu, antrian');
+		$this->db->where('id_poli = '. $antrian->id_poli .' and waktu = \''.$antrian->date_antrian.'\'');
+		$dilayani = $this->db->get('poli_dilayani')->row();
+
+		$antrian->dilayani = $dilayani ? (int)$dilayani->antrian : 0;
+
+		$start = new DateTime();
+		$start->setTime( 0, 0, 0 );
+
+		$end = new DateTime();
+		$end->setTime(23, 59, 59);
+
+		$checkedDate = DateTime::createFromFormat( "Y-m-d H:i:s", $antrian->w_antrian );
+		$antrian->in_progress = ($checkedDate->getTimestamp() > $start->getTimestamp() && $checkedDate->getTimestamp() < $end->getTimestamp()) && $antrian->dilayani < $antrian->no_antrian;
 
 		$this->db->select('id, nama, icon');
 		$this->db->where('id', $antrian->id_poli);
@@ -80,6 +102,82 @@ class Antrian_m extends CI_Model {
 		$antrian->pasien = $this->db->get('pasien')->row();
 
 		return $antrian;
+	}
+
+	public function panggil($id, $refresh = false){
+		$this->db->select('id, nama, icon');
+		$this->db->where('id', $id);
+		$output = $this->db->get('poli')->row();
+
+		$this->db->select('antrian');
+		$this->db->where('id_poli ='. $id.' and waktu = date(now())');
+		$antrian = $this->db->get('poli_dilayani')->row();
+
+		$output->urutan = sprintf("%04d", $antrian ? $antrian->antrian + 1 : 1);
+
+		$this->db->select('no_antrian');
+		$this->db->where('no_antrian > '. $output->urutan.' and date(w_antrian) = date(now()) and id_poli  = '.$id);
+		$this->db->order_by('no_antrian', 'asc');
+		$next_antrian = $this->db->get('antrian', 5, 0)->result();
+
+		$na = '';
+		if (count($next_antrian)) {
+			foreach ($next_antrian as $row) {
+				$na .= '<li class="list-group-item">'.sprintf("%04d", $row->no_antrian).'</li>'; 
+			}
+		} else {
+			$na = '<li class="list-group-item">Belum ada antrian</li>'; 
+		}
+
+		$output->list_antrian = $na;
+
+		$this->db->select('id');
+		$this->db->where('no_antrian > '. $output->urutan.' and date(w_antrian) = date(now()) and id_poli  = '.$id);
+		$output->sisa = count($this->db->get('antrian')->result());
+
+		if ($output->sisa > 0 && !$refresh) {
+			if($antrian){
+				$this->db->where('waktu = date(now()) and id_poli = '.$id);
+				$this->db->update('poli_dilayani', ['antrian' =>$output->urutan]);
+			} else {
+				$this->db->insert('poli_dilayani', ['id_poli' => $id, 'antrian' => 1, 'waktu' => date('Y-m-d')]);
+			}
+		}
+
+		$output->suara = explode(' ', terbilang($output->urutan));
+
+		return $output;
+	}
+
+	public function buatManual($id){
+		$this->db->select('no_antrian');
+		$this->db->where('date(w_antrian) = date(now()) and id_poli = '.$id);
+		$this->db->order_by('no_antrian', 'desc');
+		$lastAntrian = $this->db->get('antrian')->row();
+
+		$this->db->select('id, nama, icon');
+		$this->db->where('id', $id);
+		$poli = $this->db->get('poli')->row();
+
+		$poli->icon = base_url('images/'.$poli->icon);
+
+		$antrian = 1;
+		if ($lastAntrian) {
+			$antrian = $lastAntrian->no_antrian + 1;
+		}
+
+		$data = [
+			'id_poli' => $id,
+			'id_pasien' => null,
+			'no_antrian' => $antrian,
+			'w_antrian' => date('Y-m-d H:i:s')
+		];
+
+		$this->db->insert('antrian', $data);
+		$id = $this->db->insert_id();
+
+		return ['id' => $id, 'antrian' => $antrian, 'waktu' => $data['w_antrian'], 'poli' => $poli];
+		return $output;
 	}
 }
 

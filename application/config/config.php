@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
+date_default_timezone_set('Asia/Jakarta');
 /*
 |--------------------------------------------------------------------------
 | Base Site URL
@@ -23,8 +23,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-//$config['base_url'] = 'http://antrian-puskesmas.build';
-$config['base_url'] = 'http://2b9adc8c.ngrok.io';
+$config['base_url'] = 'http://antrian-puskesmas.build';
+//$config['base_url'] = 'http://03944543.ngrok.io';
 
 /*
 |--------------------------------------------------------------------------

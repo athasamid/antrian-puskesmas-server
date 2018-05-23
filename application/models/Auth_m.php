@@ -14,20 +14,20 @@ class Auth_m extends CI_Model {
 				switch ($user->jenis_pemilik) {
 					case 'admin':
 						$user->info  = $this->db
-							->select('nama, alamat, no_hp')
+							->select('id, nama, alamat, no_hp')
 							->where('id', $user->id_pemilik)
 							->get('admin')->row();
 						break;
 					case 'apoteker':
 						$user->info = $this->db
-							->select('nama, alamat, no_hp')
+							->select('id, nama, alamat, no_hp')
 							->where('id', $user->id_pemilik)
 							->get('apoteker')->row();
 						break;
 					//Bingung kasih nama, jadi ak nama i masyarakat	
 					case 'masyarakat':
 						$user->info = $this->db
-							->select('nama, alamat, no_hp, email')
+							->select('id, nama, alamat, no_hp, email')
 							->where('id', $user->id_pemilik)
 							->get('masyarakat')->row();
 						break;
