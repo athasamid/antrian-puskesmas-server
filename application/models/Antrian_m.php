@@ -120,6 +120,16 @@ class Antrian_m extends CI_Model {
 		$this->db->order_by('no_antrian', 'asc');
 		$next_antrian = $this->db->get('antrian', 5, 0)->result();
 
+		$this->db->select('a.id, p.id_masyarakat, u.id id_user, p.nama, '.$output->urutan.' as no_sekarang, p.alamat, p.kelamin, p.tgl_lahir, p.tempat_lahir, p.no_askes, p.no_telp, a.no_antrian');
+		$this->db->join('pasien p', 'p.id = a.id_pasien');
+		$this->db->join('masyarakat m', 'm.id = p.id_masyarakat');
+		$this->db->join('user u', 'u.jenis_pemilik = \'masyarakat\' and u.id_pemilik = m.id');
+		$this->db->where('no_antrian >= '. $output->urutan .' and date(w_antrian) = date(now()) and id_poli = '. $id);
+		$this->db->order_by('no_antrian', 'asc');
+		$dataNotif = $this->db->get('antrian a')->result();
+
+		$output->dataNotif = [];
+
 		$na = '';
 		if (count($next_antrian)) {
 			foreach ($next_antrian as $row) {
@@ -135,7 +145,10 @@ class Antrian_m extends CI_Model {
 		$this->db->where('no_antrian > '. $output->urutan.' and date(w_antrian) = date(now()) and id_poli  = '.$id);
 		$output->sisa = count($this->db->get('antrian')->result());
 
+		$output->dataNotif = $dataNotif;
+
 		if ($output->sisa > 0 && !$refresh) {
+			$output->dataNotif = $dataNotif;
 			if($antrian){
 				$this->db->where('waktu = date(now()) and id_poli = '.$id);
 				$this->db->update('poli_dilayani', ['antrian' =>$output->urutan]);

@@ -305,6 +305,19 @@ switch (ENVIRONMENT)
 
 	define('VIEWPATH', $view_folder.DIRECTORY_SEPARATOR);
 
+	$_env_configuration = str_replace('public', '.env', __DIR__);
+	if (!file_exists($_env_configuration)) {
+		header('HTTP/1.1 503 Service Unavailable.', true, 503);
+		echo 'The environment variables is not yet configured.';
+		exit(1);
+	}
+
+	require_once str_replace('public','vendor/autoload.php', __DIR__);
+
+	(new josegonzalez\Dotenv\Loader($_env_configuration))
+              ->parse()
+              ->toEnv(true);
+
 /*
  * --------------------------------------------------------------------
  * LOAD THE BOOTSTRAP FILE

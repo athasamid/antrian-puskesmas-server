@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Antrian extends CI_Controller {
+class Antrian extends Base_Controller {
 	public function __construct()
 	{
 		parent::__construct();
@@ -38,6 +38,11 @@ class Antrian extends CI_Controller {
 		$panggil = $this->antrian_m->panggil($id_poli);
 
 		// Todo Send notifikasi
+		// 
+		$dataNotif = $panggil->dataNotif;
+		//var_dump($dataNotif);die;
+		$this->sendNotification(['masyarakat'], 'panggil', $dataNotif);
+		unset($panggil->dataNotif);
 
 		header('application/json');
 		echo json_encode($panggil);

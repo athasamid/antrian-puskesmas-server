@@ -104,3 +104,33 @@ function terbilang($bilangan)
     }
     return trim($kalimat);
 }
+
+/**
+ * Return environment variable.
+ * TODO: support untuk parameter dot / garing untuk env berupa array / object
+ *
+ * @param  string       $key        Key dari environment variable yang ingin dpanggil
+ * @param  null|mixed   $default    Default value untuk variable yang tidak ditemukan
+ * @return mixed                    You know what it is
+ */
+function app_env($key, $default = null) {
+    if (isset($_ENV[$key]))
+        return $_ENV[$key];
+
+    $ci =& get_instance();
+
+    // var_dump($ci->db); die;
+    // if ($row = $ci->db->where('nama', $key)->get('pengaturan')->row()) {
+    //     $nilai = $row->nilai;
+
+    //     if (($decode = json_decode($nilai, true)) !== null) {
+    //         $nilai = $decode;
+    //     } elseif (in_array(strtolower($nilai), array('0', '1', 'true', 'false'))) {
+    //         $nilai = (boolean) $nilai;
+    //     }
+
+    //     return $nilai;
+    // }
+
+    return $default;
+}

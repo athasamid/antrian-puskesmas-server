@@ -82,8 +82,9 @@ class Auth_m extends CI_Model {
 			];
 
 			$this->db->insert('user', $dataUser);
+			$id_user = $this->db->insert_id();
 
-			$output = ['success' => true];
+			$output = ['success' => true, 'id' => $id_user, 'username' => $inputs['username'], 'info' => ['id' => $id_pemilik, 'nama' => $inputs['nama'], 'alamat' => $inputs['alamat'], 'no_hp' => $inputs['no_hp'], 'email' => $inputs['email']]];
 		}
 
 		return $output;

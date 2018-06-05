@@ -61,9 +61,9 @@
             <li>
               <a href="<?=base_url('antrian')?>">Panggil</a>
             </li>
-            <li>
+            <!-- <li>
               <a href="<?=base_url('antrian/buat')?>">Buat</a>
-            </li>
+            </li> -->
           </ul>
         </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Resep Dokter">

@@ -22,7 +22,7 @@ class User extends REST_Controller {
 		$inputs = $this->post();
 		$register = $this->auth_m->do_register($inputs);
 
-		if (isset($register['success']))
+		//if (isset($register['success']))
 			// Todo send emai verification
 			
 		$this->response($register);
