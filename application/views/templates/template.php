@@ -124,7 +124,7 @@
           <div class="modal-body">Pilih tombol keluar jika anda yakin ingin keluar!!</div>
           <div class="modal-footer">
             <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
-            <a class="btn btn-primary" href="<?=base_url('user/do_logout')?>">Keluar</a>
+            <a class="btn btn-primary" href="<?=base_url('auth/do_logout')?>">Keluar</a>
           </div>
         </div>
       </div>

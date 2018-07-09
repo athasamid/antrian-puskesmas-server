@@ -42,6 +42,12 @@ class Auth extends Base_Controller {
 		echo $output;
 	}
 
+	public function do_logout(){
+		$data = ['isLogin', 'username'];
+		$this->session->unset_userdata($data);
+		redirect(base_url('auth/login'), 'auto', 302);
+	}
+
 }
 
 /* End of file Auth.php */
