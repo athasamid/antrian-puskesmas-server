@@ -10,35 +10,37 @@ class Auth_m extends CI_Model {
 		if ($user = $this->db->get('user')->row()) {
 			if ($api && $user->jenis_pemilik != 'masyarakat'){
 				return ['error' => ['Username atau password tidak sesuai']];
-			} else if (password_verify($password, $user->password)) {
-				switch ($user->jenis_pemilik) {
-					case 'admin':
-						$user->info  = $this->db
-							->select('id, nama, alamat, no_hp')
-							->where('id', $user->id_pemilik)
-							->get('admin')->row();
-						break;
-					case 'apoteker':
-						$user->info = $this->db
-							->select('id, nama, alamat, no_hp')
-							->where('id', $user->id_pemilik)
-							->get('apoteker')->row();
-						break;
-					//Bingung kasih nama, jadi ak nama i masyarakat	
-					case 'masyarakat':
-						$user->info = $this->db
-							->select('id, nama, alamat, no_hp, email')
-							->where('id', $user->id_pemilik)
-							->get('masyarakat')->row();
-						break;
-				}
-
-				unset($user->password);
-				unset($user->id_pemilik);
-
-				return $user;
 			} else {
-				return ['error' => ['Username atau password tidak sesuai']];
+				if (password_verify($password, $user->password)) {
+					switch ($user->jenis_pemilik) {
+						case 'admin':
+							$user->info  = $this->db
+								->select('id, nama, alamat, no_hp')
+								->where('id', $user->id_pemilik)
+								->get('admin')->row();
+							break;
+						case 'apoteker':
+							$user->info = $this->db
+								->select('id, nama, alamat, no_hp')
+								->where('id', $user->id_pemilik)
+								->get('apoteker')->row();
+							break;
+						//Bingung kasih nama, jadi ak nama i masyarakat	
+						case 'masyarakat':
+							$user->info = $this->db
+								->select('id, nama, alamat, no_hp, email')
+								->where('id', $user->id_pemilik)
+								->get('masyarakat')->row();
+							break;
+					}
+
+					unset($user->password);
+					unset($user->id_pemilik);
+
+					return $user;	
+				} else {
+					return ['error' => ['Username atau password tidak sesuai']];
+				}
 			}
 		} else {
 			return ['error' => ['Username atau password tidak sesuai']];

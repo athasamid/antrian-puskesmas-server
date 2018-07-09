@@ -44,9 +44,9 @@
             <li>
               <a href="<?= base_url('admin') ?>">Admin</a>
             </li>
-            <li>
+            <!-- <li>
               <a href="<?=base_url('apoteker')?>">Apoteker</a>
-            </li>
+            </li> -->
             <li>
               <a href="<?=base_url('poli')?>">Poli</a>
             </li>
@@ -66,12 +66,12 @@
             </li> -->
           </ul>
         </li>
-        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Resep Dokter">
+        <!-- <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Resep Dokter">
           <a class="nav-link" href="<?=base_url('resepdokter')?>" >
             <i class="fa fa-fw fa-medkit"></i>
             <span class="nav-link-text">Resep Dokter</span>
           </a>
-        </li>
+        </li> -->
       </ul>
       <ul class="navbar-nav sidenav-toggler">
         <li class="nav-item">
