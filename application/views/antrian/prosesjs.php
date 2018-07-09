@@ -22,6 +22,7 @@
     			$('#dilayani').html(response.urutan)
     			$('#sisa').html(response.sisa)
                 $('#list-antrian').html(response.list_antrian)
+                $('#tabel-antrian').html(response.daftar_antrian)
     			
     			call = response.suara
     			playAntrian()

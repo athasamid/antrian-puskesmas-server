@@ -2,7 +2,6 @@
 	<div class="card-body">
 		<h5 class="card-title"><?=$poli->nama?></h5>
 		<h6 class="card-subtitle mb-2 text-muted" id="waktu">Sabtu, 19 Mei 2018 Pukul 20:00:00</h6>
-		
 	</div>
 </div>
 <div class="row mt-4">
@@ -45,6 +44,16 @@
 			<div class="card-body text-center" style="cursor: pointer;" id="card-recall">
 				<i class="fa fa-5x fa-repeat"></i>
 				<h6 class="card-subtitle mt-1">Panggil Ulang</h6>
+			</div>
+		</div>
+		<div class="card mt-3">
+			<div class="card-header">Daftar Pasien</div>
+			<div class="card-body">
+				<div class="table-scrollable">
+					<table id="tabel-antrian" class="table table-bordered">
+						<?= $antrian->daftar_antrian?>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>

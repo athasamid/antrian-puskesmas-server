@@ -18,6 +18,13 @@
   <!-- Custom styles for this template-->
   <link href="<?= base_url('css/sb-admin.min.css')?>" rel="stylesheet">
   <link href="<?= base_url('css/alertify.min.css')?>" rel="stylesheet">
+
+  <style type="text/css">
+    .table-scrollable {
+      height: 30vh !important;
+      overflow: scroll;
+    }
+  </style>
 </head>
 
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">

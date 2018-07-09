@@ -128,6 +128,12 @@ class Antrian_m extends CI_Model {
 		$this->db->order_by('no_antrian', 'asc');
 		$dataNotif = $this->db->get('antrian a')->result();
 
+		$this->db->select('a.id, p.nama, a.no_antrian, p.alamat, p.kelamin, p.tgl_lahir, p.tempat_lahir, p.no_askes, p.no_telp');
+		$this->db->join('pasien p', 'p.id = a.id_pasien');
+		$this->db->where('date(w_antrian) = date(now()) and id_poli = '.$id);
+		$this->db->order_by('no_antrian', 'asc');
+		$daftar_antrian = $this->db->get('antrian a')->result();
+
 		$output->dataNotif = [];
 
 		$na = '';
@@ -140,6 +146,17 @@ class Antrian_m extends CI_Model {
 		}
 
 		$output->list_antrian = $na;
+
+		$da = '';
+		if (count($daftar_antrian)) {
+			foreach ($daftar_antrian as $row) {
+				$da .= '<tr><td rowspan="2" style="font-size: 20pt;  text-align: center;" valign="center">'.$row->no_antrian.'</td><td>'.$row->nama.'</td></tr><tr><td>'.$row->no_telp.'</td></tr>';
+			}
+		} else {
+			$da .= '<tr><td>Tidak ada antrian</td></tr>';
+		}
+
+		$output->daftar_antrian = $da;
 
 		$this->db->select('id');
 		$this->db->where('no_antrian > '. $output->urutan.' and date(w_antrian) = date(now()) and id_poli  = '.$id);

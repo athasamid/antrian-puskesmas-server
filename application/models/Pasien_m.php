@@ -14,6 +14,22 @@ class Pasien_m extends CI_Model {
 		$this->db->insert('pasien', $data);
 		return $this->db->insert_id();
 	}
+
+	public function get($id){
+		$this->db->select('id, nama, alamat, kelamin, tgl_lahir, tempat_lahir, no_askes, no_telp');
+		$this->db->where('id', $id);
+		return $this->db->get('pasien')->get();
+	}
+
+	public function delete($id){
+		$this->db->where('id', $id);
+		return $this->db->delete('pasien');
+	}
+
+	public function update($id, $data){
+		$this->db->where('id', $id);
+		return $this->db->update('pasien', $data)
+	}
 }
 
 /* End of file Pasien_m.php */
