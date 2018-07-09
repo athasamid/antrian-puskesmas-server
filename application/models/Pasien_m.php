@@ -28,7 +28,7 @@ class Pasien_m extends CI_Model {
 
 	public function update($id, $data){
 		$this->db->where('id', $id);
-		return $this->db->update('pasien', $data)
+		return $this->db->update('pasien', $data);
 	}
 }
 
