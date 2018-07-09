@@ -18,7 +18,7 @@ class Pasien_m extends CI_Model {
 	public function get($id){
 		$this->db->select('id, nama, alamat, kelamin, tgl_lahir, tempat_lahir, no_askes, no_telp');
 		$this->db->where('id', $id);
-		return $this->db->get('pasien')->get();
+		return $this->db->get('pasien')->row();
 	}
 
 	public function delete($id){
