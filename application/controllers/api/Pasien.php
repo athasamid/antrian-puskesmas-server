@@ -38,6 +38,7 @@ class Pasien extends REST_Controller {
 
 	// untuk ubah data
 	public function index_put($id){
+		$inputs = $this->put();
 		$data = [
 			'nama' => $inputs['nama'],
 			'alamat' => $inputs['alamat'],
